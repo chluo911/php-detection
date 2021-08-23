@@ -1,0 +1,55 @@
+%\PassOptionsToPackage{hyphens}{url}
+%\PassOptionsToPackage{usenames,dvipsnames,table}{xcolor}
+%\PassOptionsToPackage{breaklinks,colorlinks}{hyperref}
+\documentclass[sigconf,review,anonymous]{acmart}
+\acmConference[ICSE 2022]{The 44th International Conference on Software Engineering}{May 21–29, 2022}{Pittsburgh, PA, USA}
+%\pagestyle{plain}
+
+% conference specific style
+\usepackage{natbib}
+
+
+% common packages
+\let\labelindent\relax
+\include{pkgs}
+
+\newcommand{\sys}{\mbox{\textsc{Sys}}\xspace}
+
+% ref. http://en.wikibooks.org/wiki/LaTeX/Colors
+\newcommand{\WM}[1]{\textcolor{Violet}{WM: #1}}
+\newcommand{\PENGHUI}[1]{\textcolor{blue}{PENGHUI: #1}}
+\newcommand{\LCH}[1]{\textcolor{BrickRed}{LCH: #1}}
+\newcommand{\XX}[0]{\textcolor{red}{XXX}}
+\newcommand{\XXX}[1]{\textcolor{red}{XXX: #1}}
+\newcommand{\TODO}[1]{\textcolor{Melon}{TODO: #1}}
+
+\input{cmds}
+\input{rev}
+
+\begin{document}
+
+\sloppy
+\input{hdr}
+\input{abstract}
+
+%\date{}
+\maketitle
+
+\sloppy
+
+
+\input{intro}
+\input{background}
+\input{design}
+\input{impl}
+\input{eval}
+\input{relwk}
+\input{conclusion}
+%\input{ack}
+
+\balance
+%\bibliographystyle{plain}
+\bibliographystyle{ACM-Reference-Format}
+
+\bibliography{p,lab,conf}
+\end{document}

@@ -1,0 +1,13 @@
+To keep up with the latest version, please set TEMPLATE_DIR in "bin/symlink.py"
+of your *OWN* paper repository to the correct path of your local paper-template
+directory, then run the following command to create symbolic links in your
+*OWN* paper repository based on this template.
+
+    $ ./bin/symlink.py
+
+After that, you can add your *OWN* paper files to a new repository and invite
+others to work on it.
+
+##########
+Please refer to https://github.com/tsgates/die/blob/master/README for build
+instructions of the die paper template.

@@ -1,0 +1,86 @@
+\section{Introduction}
+\label{s:intro}
+
+PHP is the most popular server-side language used by 79\% websites \cite{php-usage}.
+Millions of web users interact with PHP applications for shopping \cite{Magento, Prestashop}, blogging \cite{WordPress, Joomla}, \etc{}.
+However, PHP applications may suffer from injection attacks \cite{injection-attack} when the user inputs are not properly sanitized.
+Due to the highly interactive nature of PHP code, injection attack is very common and now ranking as number one web application security risks in OWASP 2021 \cite{OWASP-top10}.
+
+Many works are proposed to detect injection vulnerabilities in PHP applications \citep{blackwidow, Rivulet, navex, rips, php-cpg, enemy}.
+We summarize them into three categories.
+The dynamic-based approaches feed crafted inputs (\eg{,} XSS payloads) to applications and trigger injection vulnerabilities at runtime.
+The biggest challenge of dynamic testing is to reach deep states of applications \citep{blackwidow}.
+%Due to the limited code coverage, dynamic testing usually suffer from false negatives.
+The static-based approach performs taint analysis on the target applications \citep{rips}.
+It achieves a better code coverage but suffers from high false positives because of the difficulties in modeling PHP's OOP feature.
+In 2018, Navex \citep{navex} implemented a hybrid design.
+It first obtained potential vulnerabilities using static analysis, then performed concolic execution to validate/exploit the potential vulnerabilities.
+
+In this work, we continue the line of research in static analysis.
+Compared with dynamic testing, static approach require no test inputs and is more scalable.
+Static approaches can also complement dynamic testing.
+For example, \citep{navex} generates exploits to validate the vulnerabilities detected by static analysis \cite{php-cpg}.
+The existing static analysis, however, is not accurate nor sound.
+It lacks the support of OOP features \citep{rips} and only partially support inter-procedural analysis.
+This would lead to both false positives and false negatives in reporting vulnerabilities.
+Although the previous works state the existing static  are good enough \citep{navex, php-cpg}, we find 
+
+
+Existing work, taint analysis, (briefly) introduce CPG, do not support dynamic features, false positives and false negatives, introduce Navex, built upon CPG, how navex handle dynamic feature (they perform symbolic exection and generate inputs to exploit the application), reduce false positives, dynamic execution are still based on static results (CPG). RIPS, the commercial tool, the open-source version does not support OOP. 
+
+Statically analysis on dynamic feature is a open challenge, no (open-source) static detection tools can handle OOP feature well, Instead, as a common practice, they match only dynamic function calls that have a unique method name. this would lead to false negatives because some vulnerable code paths may not be exposed in the incomplete call graph. However, already good enough, two reasons, already cover over 80\% call site\citep{php-cpg}, low impact on the detection results\citep{navex}, 
+
+OOP programming is increasingly popular, we thus raise a question: to what extends (not) supporting OOP features affect the detection results on modern applications? To answer this, we study the existing tools and the CVEs they disclosed, we first find the vulnerabilities detected by static tools \citep{navex, php-cpg} are relatively shallow ones, which are not likely to exist in popular applications that are maintained by a group of experts. Indeed, as the evaluation shows (see \ref{s:eval}), the existing tools fail to find bugs on intricate modern applications.
+
+Going deeper, we analyze and summarize two challenges that hinder their detection efficiency.
+Firstly, to find a (potential) vulnerability, it requires the detection tools to support \emph{all} the function calls along the code path.
+As PHP-Joern\citep{php-cpg} can only partial support dynamic calls, it offers no guarantee on that. 
+To make matters worse, methods with commonly-used method names like \lstinline{get(), set()} are likely to be frequently invoked and they tend to appear in many call chains.
+For instance, the built-in \lstinline{mysqli_query()} function (one sink) in WordPress is called by the custom method named \lstinline{query()}.
+Since the method name \lstinline{query()} appears multiple times under different class scopes, the existing approach would not link this method to its caller and thus report no SQL injection.
+
+Secondly, to trace taint variables, it requires the detecting tool to perform a precise inter-procedural data flow analysis.
+Specifically, the data flow analysis shall support propagation among not only local variables but global variables (\eg{,} class properties).
+This is not easy to do because all statements executed \emph{before} the use of global variables might be the source of global variables.
+The existing solutions \citep{php-cpg, navex} backwardly traverse code property graph and consider only data propagation among local variables and parameters, thus is not precise nor complete.
+As global variables could be frequently involved in taint propagation (see \ref{s:eval}), this approach could severely affect the analysis results.
+
+It is important yet challenging to support OOP feature in PHP programs.
+To address the first challenge, we implement a sound call graph.
+receiver object {\ie{,} \lstinline{$obj->a()}}, backwardly analysis, until data source (\eg{,} \lstinline{new()}).
+The receiver objects may be assigned by global variables.
+To handle data propagation among global variables, we first resolve each global variables into an \emph{identifier}.
+We then do backward traverse on the (incomplete) call graph and locate the source assignments to global variable based on its identifier.
+The final source assignments we obtain shall indicate the class of the receiver objects.
+We handle the variable functions (\ie{,} \lstinline{\$func()}) in a similar way.
+whereas in this step we get the value of the variables instead of its class.
+
+We then perform taint analysis upon the call graph.
+Similar to previous works, we define user-controlled inputs (\eg{,} \$_POST) as \emph{sources} and security sensitive functions (\eg{,} echo()) as \emph{sinks}.
+Starting from each source, we forwardly propagate the taint variables and construct a \emph{taint tree}.
+The taint tree is consisted of \emph{edges} that depicts the propagation of taint variables and \emph{taint nodes}, each of which corresponding to one tainted statement and the calling context.
+Our taint analysis is path-sensitive, thus one statement may corresponding to multiple taint nodes.
+We update the taint trees while traversing the call graph, and finally report potential vulnerabilities once we find taint variables reach sinks.
+
+We finally validate the detected vulnerabilities using dynamic analysis \citep{navex}.
+Navex not available, implement simplified symbolic execution, solve constrains and generate navigation graph, summarize the evaluation results. 
+
+In summary, this paper makes the following contributions:
+\begin{itemize}%[itemsep=1ex,parsep=0ex]
+    \item We design and implement \sys, a tool that performs accurate static taint analysis on PHP applications. It supports OOP features thus could be applied in complicated modern applications.
+    \item With the taint analysis, we find \XXX{} vulnerabilities (including \XXX{} previously unknown).
+    \item \sys combines dynamic analysis with static analysis, and we plan to make it open source.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+

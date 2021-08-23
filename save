@@ -1,0 +1,4 @@
+JApplicationWeb->__construct() /Applications/MAMP/htdocs/joomla/libraries/cms/application/cms.php:105
+JApplicationCms->__construct() /Applications/MAMP/htdocs/joomla/libraries/cms/application/administrator.php:45
+JApplicationAdministrator->__construct() /Applications/MAMP/htdocs/joomla/libraries/cms/application/cms.php:412
+JApplicationCms::getInstance() /Applications/MAMP/htdocs/joomla/libraries/joomla/factory.php:125
